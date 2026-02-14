@@ -28,5 +28,28 @@
  *   // => ""
  */
 export function formatChaiMenu(items) {
-  // Your code here
+
+  // check array
+  if (!Array.isArray(items) || items.length === 0) {
+    return "";
+  }
+
+  // filter se validation le lo
+  const validItems = items.filter(item => {
+    return (
+      typeof item.name === "string" &&
+      item.name.trim() !== "" &&
+      typeof item.price === "number" &&
+      item.price > 0
+    );
+  });
+
+  // sbko uppercase me or rs add kro
+  const formatted = validItems.map(item => {
+    const name = item.name.toUpperCase();
+    return name + " - Rs." + item.price;
+  });
+
+  // join
+  return formatted.join(" | ");
 }

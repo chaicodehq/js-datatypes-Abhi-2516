@@ -30,5 +30,41 @@
  *   // => "Dil ka Kya Kare"
  */
 export function fixBollywoodTitle(title) {
-  // Your code here
+
+  //check karo ki input string hai ya nahi
+  if (typeof title !== "string") {
+    return "";
+  }
+
+  //starting, ending aur beech ke extra spaces hatao
+  let clean = title.trim().replace(/\s+/g, " ");
+
+  // agar trim ke baad string empty ho
+  if (clean === "") {
+    return "";
+  }
+
+  //chhote words ki list jo lowercase rahenge (except first word)
+  const smallWords = ["ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"];
+
+  //words ko array mein convert karo
+  const words = clean.split(" ");
+
+  //har word ko Title Case mein convert karo
+  const result = words.map((word, index) => {
+    let lower = word.toLowerCase();
+
+    // agar first word hai ya smallWords list mein nahi hai to capitalize karo
+    if (index === 0 || !smallWords.includes(lower)) {
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }
+    // warna lowercase hi rehne do
+    else {
+      return lower;
+    }
+  });
+
+  // array ko dobara string mein convert karo
+  return result.join(" ");
 }
+

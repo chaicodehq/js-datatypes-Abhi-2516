@@ -28,5 +28,27 @@
  *   // => "INVALID"
  */
 export function maskAadhaar(aadhaarNumber) {
-  // Your code here
+
+  //sbse phle apna hmesa ka kaam string chek krenge valid hia ki nhi
+  if (typeof aadhaarNumber !== "string") {
+    return "INVALID";
+  }
+
+  // phr 12 size ka check krenge
+  if (aadhaarNumber.length !== 12) {
+    return "INVALID";
+  }
+
+  // kuch restriction check krenge
+  if (!/^\d+$/.test(aadhaarNumber)) {
+    return "INVALID";
+  }
+
+  // slice se last ke 4 digit le lenge
+  const lastFour = aadhaarNumber.slice(8);
+
+  // output print kr denfe baki sb XX or last 4 digit
+  const masked = "XXXX-XXXX-" + lastFour;
+
+  return masked;
 }

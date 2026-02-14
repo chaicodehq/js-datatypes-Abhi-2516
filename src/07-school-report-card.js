@@ -41,5 +41,84 @@
  *   // => { name: "Priya", totalMarks: 63, percentage: 31.5, grade: "F", ... }
  */
 export function generateReportCard(student) {
-  // Your code here
+
+  // student valid object hona chahiye
+  if (typeof student !== "object" || student === null) {
+    return null;
+  }
+
+  // name valid string hona chahiye
+  if (typeof student.name !== "string" || student.name.trim() === "") {
+    return null;
+  }
+
+  // marks valid object hona chahiye
+  const marksObj = student.marks;
+  if (
+    typeof marksObj !== "object" ||
+    marksObj === null ||
+    Array.isArray(marksObj) ||
+    Object.keys(marksObj).length === 0
+  ) {
+    return null;
+  }
+
+  const entries = Object.entries(marksObj);
+
+  // marks valid number (0–100) hone chahiye
+  for (let [subject, mark] of entries) {
+    if (!Number.isFinite(mark) || mark < 0 || mark > 100) {
+      return null;
+    }
+  }
+
+  const values = Object.values(marksObj);
+  const subjectCount = values.length;
+
+  // total marks
+  const totalMarks = values.reduce((sum, m) => sum + m, 0);
+
+  // percentage calculate
+  const percentage = parseFloat(
+    ((totalMarks / (subjectCount * 100)) * 100).toFixed(2)
+  );
+
+  // grade decide
+  let grade;
+  if (percentage >= 90) grade = "A+";
+  else if (percentage >= 80) grade = "A";
+  else if (percentage >= 70) grade = "B";
+  else if (percentage >= 60) grade = "C";
+  else if (percentage >= 40) grade = "D";
+  else grade = "F";
+
+  // highest and lowest subject
+  let highestSubject = entries[0][0];
+  let lowestSubject = entries[0][0];
+
+  for (let [subject, mark] of entries) {
+    if (mark > marksObj[highestSubject]) highestSubject = subject;
+    if (mark < marksObj[lowestSubject]) lowestSubject = subject;
+  }
+
+  // passed and failed subjects
+  const passedSubjects = entries
+    .filter(([s, m]) => m >= 40)
+    .map(([s]) => s);
+
+  const failedSubjects = entries
+    .filter(([s, m]) => m < 40)
+    .map(([s]) => s);
+
+  return {
+    name: student.name,
+    totalMarks,
+    percentage,
+    grade,
+    highestSubject,
+    lowestSubject,
+    passedSubjects,
+    failedSubjects,
+    subjectCount
+  };
 }

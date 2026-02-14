@@ -47,5 +47,76 @@
  *   //      frequentContact: "Swiggy", allAbove100: false, hasLargeTransaction: true }
  */
 export function analyzeUPITransactions(transactions) {
-  // Your code here
+
+  // transactions valid array hona chahiye
+  if (!Array.isArray(transactions) || transactions.length === 0) {
+    return null;
+  }
+
+  // valid transactions filter kar rahe hain
+  const valid = transactions.filter(t =>
+    (t.type === "credit" || t.type === "debit") &&
+    Number.isFinite(t.amount) &&
+    t.amount > 0
+  );
+
+  if (valid.length === 0) {
+    return null;
+  }
+
+  // total credit aur debit
+  const totalCredit = valid
+    .filter(t => t.type === "credit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalDebit = valid
+    .filter(t => t.type === "debit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const netBalance = totalCredit - totalDebit;
+
+  const transactionCount = valid.length;
+
+  const totalAmount = valid.reduce((sum, t) => sum + t.amount, 0);
+  const avgTransaction = Math.round(totalAmount / transactionCount);
+
+  // highest transaction
+  const highestTransaction = [...valid].sort((a, b) => b.amount - a.amount)[0];
+
+  // category breakdown
+  const categoryBreakdown = valid.reduce((obj, t) => {
+    obj[t.category] = (obj[t.category] || 0) + t.amount;
+    return obj;
+  }, {});
+
+  // frequent contact
+  const contactCount = {};
+  let frequentContact = valid[0].to;
+  let maxCount = 0;
+
+  valid.forEach(t => {
+    contactCount[t.to] = (contactCount[t.to] || 0) + 1;
+    if (contactCount[t.to] > maxCount) {
+      maxCount = contactCount[t.to];
+      frequentContact = t.to;
+    }
+  });
+
+  // every / some checks
+  const allAbove100 = valid.every(t => t.amount > 100);
+  const hasLargeTransaction = valid.some(t => t.amount >= 5000);
+
+  return {
+    totalCredit,
+    totalDebit,
+    netBalance,
+    transactionCount,
+    avgTransaction,
+    highestTransaction,
+    categoryBreakdown,
+    frequentContact,
+    allAbove100,
+    hasLargeTransaction
+  };
 }
+
